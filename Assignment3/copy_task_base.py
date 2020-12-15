@@ -19,10 +19,8 @@ def copy_data(T, K, batch_size):
 	zeros2 = np.zeros((batch_size, K - 1))
 	zeros3 = np.zeros((batch_size, K + T))
 	marker = 9 * np.ones((batch_size, 1))
-
 	x = torch.LongTensor(np.concatenate((seq, zeros1, marker, zeros2), axis=1))
 	y = torch.LongTensor(np.concatenate((zeros3, seq), axis=1))
-
 	return x, y
 
 
@@ -77,7 +75,10 @@ def main():
 	# create the training data
 	X, Y = copy_data(T, K, n_train)
 	print('{}, {}'.format(X.shape, Y.shape))
-
+	plt.imshow(X[:20])
+	plt.show()
+	plt.imshow(Y[:20])
+	plt.show()
 	ohX = torch.FloatTensor(batch_size, T + 2 * K, n_characters)
 	onehot(ohX, X[:batch_size])
 	print('{}, {}'.format(X[:batch_size].shape, ohX.shape))

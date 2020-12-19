@@ -33,20 +33,20 @@ def onehot(out, input):
 
 # Class for handling copy data
 class Model(nn.Module):
-	def __init__(self, m, k):
+	def __init__(self, m, hidden_size_input):
 		super(Model, self).__init__()
 
 		self.m = m
-		self.k = k
+		self.hidden_size = hidden_size_input
 
-		self.rnn = nn.RNNCell(m + 1, k)
-		self.V = nn.Linear(k, m)
+		self.rnn = nn.RNNCell(m + 1, hidden_size_input)
+		self.V = nn.Linear(hidden_size_input, m)
 
 		# loss for the copy data
 		self.loss_func = nn.CrossEntropyLoss()
 
 	def forward(self, inputs):
-		state = torch.zeros(inputs.size(0), self.k, requires_grad=False)
+		state = torch.zeros(inputs.size(0), self.hidden_size, requires_grad=False)
 
 		outputs = []
 		for input in torch.unbind(inputs, dim=1):
@@ -82,7 +82,9 @@ def main():
 	plt.imshow(Y[:20])
 	plt.show()
 	ohX = torch.FloatTensor(batch_size, T + 2 * K, n_characters)
+	temp1 = X[:batch_size]
 	onehot(ohX, X[:batch_size])
+	temp2 = ohX
 	print('{}, {}'.format(X[:batch_size].shape, ohX.shape))
 
 	model = Model(n_classes, hidden_size)

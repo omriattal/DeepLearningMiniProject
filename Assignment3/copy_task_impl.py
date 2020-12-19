@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import math
 
+
 # Our LSTM Layer
 class MyLSTMLayer(nn.Module):
     def __init__(self, input_size, hidden_size):
@@ -66,9 +67,8 @@ class MyRNNLayer(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        nn.init.uniform_(self.weight_ih, -math.sqrt(1/self.hidden_size),math.sqrt(1/self.hidden_size))
-        nn.init.uniform_(self.weight_hh, -math.sqrt(1/self.hidden_size),math.sqrt(1/self.hidden_size))
-
+        nn.init.uniform_(self.weight_ih, -math.sqrt(1 / self.hidden_size), math.sqrt(1 / self.hidden_size))
+        nn.init.uniform_(self.weight_hh, -math.sqrt(1 / self.hidden_size), math.sqrt(1 / self.hidden_size))
 
     def update(self, input, hidden, label, lr=0.01):
         output = self.forward(input, hidden)
@@ -98,7 +98,7 @@ class MyLinear(nn.Module):
         self.reset_parameters()
 
     def reset_parameters(self):
-        nn.init.uniform_(self.weight, -math.sqrt(1/self.in_features),math.sqrt(1/self.in_features))
+        nn.init.uniform_(self.weight, -math.sqrt(1 / self.in_features), math.sqrt(1 / self.in_features))
 
     def forward(self, my_input):
         x, y = my_input.shape
@@ -291,5 +291,6 @@ def main_mlp():
 
 
 if __name__ == "__main__":
-    main_mlp()
-    # main_rnn()
+    # main_mlp()
+    main_rnn()
+    # main_lstm()

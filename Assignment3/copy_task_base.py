@@ -61,10 +61,10 @@ class Model(nn.Module):
 		return self.loss_func(logits.view(-1, 9), y.view(-1))
 
 
-T = 5
+T = 20
 K = 3
 batch_size = 128
-iter = 5000
+iter = 500
 n_train = iter * batch_size
 n_classes = 9
 hidden_size = 64

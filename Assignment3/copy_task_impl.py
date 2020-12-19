@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
+from Assignment2 import lstm, rnn, mlp
 
 print(np.__version__)
 print(torch.__version__)
@@ -31,37 +32,71 @@ def onehot(out, input):
 	out.scatter_(2, in_unsq, 1)
 
 
-# Class for handling copy data
-class Model(nn.Module):
+class RNNModel(nn.Module):
 	def __init__(self, m, k):
-		super(Model, self).__init__()
-
+		super(RNNModel, self).__init__()
 		self.m = m
 		self.k = k
-
-		self.rnn = nn.RNNCell(m + 1, k)
-		self.V = nn.Linear(k, m)
-
-		# loss for the copy data
+		self.rnn = rnn.MyRNNLayer(m + 1, k)
+		self.V = mlp.MyLinear(k, m)
 		self.loss_func = nn.CrossEntropyLoss()
 
 	def forward(self, inputs):
 		state = torch.zeros(inputs.size(0), self.k, requires_grad=False)
-
 		outputs = []
 		for input in torch.unbind(inputs, dim=1):
 			state = self.rnn(input, state)
 			outputs.append(self.V(state))
-
 		return torch.stack(outputs, dim=1)
 
 	def loss(self, logits, y):
-		what = logits.view(-1, 9)
-		els = y.view(-1)
 		return self.loss_func(logits.view(-1, 9), y.view(-1))
 
 
-T = 5
+class LSTMMODEL(nn.Module):
+	def __init__(self, m, k):
+		super(LSTMMODEL, self).__init__()
+		self.m = m
+		self.k = k
+		self.lstm = lstm.MyLSTMLayer(m + 1, k)
+		self.V = mlp.MyLinear(k, m)
+		self.loss_func = nn.CrossEntropyLoss()
+
+	def forward(self, inputs):
+		hidden_state = torch.zeros(inputs.size(0), self.k, requires_grad=False)
+		cell_state = torch.zeros(inputs.size(0), self.k, requires_grad=False)
+		outputs = []
+		for input in torch.unbind(inputs, dim=1):
+			hidden_state, cell_state = self.lstm(input, hidden_state, cell_state)
+			outputs.append(self.V(cell_state))
+		return torch.stack(outputs, dim=1)
+
+	def loss(self, logits, y):
+		return self.loss_func(logits.view(-1, 9), y.view(-1))
+
+
+
+class MLPModel(nn.Module):
+	def __init__(self, m, k):
+		super(MLPModel, self).__init__()
+		self.m = m
+		self.k = k
+		self.rnn = rnn.MyRNNLayer(m + 1, k)
+		self.V = mlp.MyLinear(k, m)
+		self.loss_func = nn.CrossEntropyLoss()
+
+	def forward(self, inputs):
+		state = torch.zeros(inputs.size(0), self.k, requires_grad=False)
+		outputs = []
+		for input in torch.unbind(inputs, dim=1):
+			state = self.rnn(input, state)
+			outputs.append(self.V(state))
+		return torch.stack(outputs, dim=1)
+
+	def loss(self, logits, y):
+		return self.loss_func(logits.view(-1, 9), y.view(-1))
+
+T = 1
 K = 3
 batch_size = 128
 iter = 5000
@@ -77,31 +112,21 @@ def main():
 	# create the training data
 	X, Y = copy_data(T, K, n_train)
 	print('{}, {}'.format(X.shape, Y.shape))
-	plt.imshow(X[:20])
-	plt.show()
-	plt.imshow(Y[:20])
-	plt.show()
 	ohX = torch.FloatTensor(batch_size, T + 2 * K, n_characters)
 	onehot(ohX, X[:batch_size])
 	print('{}, {}'.format(X[:batch_size].shape, ohX.shape))
-
-	model = Model(n_classes, hidden_size)
+	model = RNNModel(n_classes, hidden_size)
 	model.train()
-
 	opt = torch.optim.RMSprop(model.parameters(), lr=lr)
-
 	for step in range(iter):
 		bX = X[step * batch_size: (step + 1) * batch_size]
 		bY = Y[step * batch_size: (step + 1) * batch_size]
-
 		onehot(ohX, bX)
-
 		opt.zero_grad()
 		logits = model(ohX)
 		loss = model.loss(logits, bY)
 		loss.backward()
 		opt.step()
-
 		if step % print_every == 0:
 			print('Step={}, Loss={:.4f}'.format(step, loss.item()))
 

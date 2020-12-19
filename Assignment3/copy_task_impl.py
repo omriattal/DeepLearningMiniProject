@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch
 import torch.nn as nn
-
+import math
 
 # Our LSTM Layer
 class MyLSTMLayer(nn.Module):
@@ -61,11 +61,14 @@ class MyRNNLayer(nn.Module):
         self.nonlinearity = nonlinearity
         self.register_parameter('bias_ih', None)
         self.register_parameter('bias_hh', None)
+        self.weight_ih = torch.nn.Parameter(torch.zeros(self.input_size, self.hidden_size, requires_grad=True))
+        self.weight_hh = torch.nn.Parameter(torch.zeros(self.hidden_size, self.hidden_size, requires_grad=True))
         self.reset_parameters()
 
     def reset_parameters(self):
-        self.weight_ih = torch.nn.Parameter(torch.randn(self.input_size, self.hidden_size, requires_grad=True))
-        self.weight_hh = torch.nn.Parameter(torch.randn(self.hidden_size, self.hidden_size, requires_grad=True))
+        nn.init.uniform_(self.weight_ih, -math.sqrt(1/self.hidden_size),math.sqrt(1/self.hidden_size))
+        nn.init.uniform_(self.weight_hh, -math.sqrt(1/self.hidden_size),math.sqrt(1/self.hidden_size))
+
 
     def update(self, input, hidden, label, lr=0.01):
         output = self.forward(input, hidden)
@@ -91,7 +94,11 @@ class MyLinear(nn.Module):
         self.in_features = in_features
         self.out_features = out_features
         self.register_parameter('bias', None)
-        self.weight = torch.nn.Parameter(torch.randn(self.out_features, self.in_features, requires_grad=True))
+        self.weight = torch.nn.Parameter(torch.zeros(self.out_features, self.in_features, requires_grad=True))
+        self.reset_parameters()
+
+    def reset_parameters(self):
+        nn.init.uniform_(self.weight, -math.sqrt(1/self.in_features),math.sqrt(1/self.in_features))
 
     def forward(self, my_input):
         x, y = my_input.shape
@@ -206,7 +213,7 @@ class MLPModel(nn.Module):
         return self.loss_func(logits, y.float())
 
 
-T = 5
+T = 20
 K = 3
 batch_size = 128
 iter = 5000

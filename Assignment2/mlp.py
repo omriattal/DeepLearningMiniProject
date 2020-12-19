@@ -16,7 +16,7 @@ class MyLinear(nn.Module):
 		if y != self.in_features:
 			print(f'Wrong Input Features. Please use tensor with {self.in_features} Input Features')
 			return 0
-		output = torch.sigmoid(my_input.matmul(self.weight.t()))
+		output = torch.sigmoid(torch.mm(my_input.float(), self.weight.t()))
 		return output
 
 	def update(self, my_input, label, lr=0.01):

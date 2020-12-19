@@ -52,7 +52,6 @@ class RNNModel(nn.Module):
 	def loss(self, logits, y):
 		return self.loss_func(logits.view(-1, 9), y.view(-1))
 
-
 class LSTMMODEL(nn.Module):
 	def __init__(self, m, k):
 		super(LSTMMODEL, self).__init__()
@@ -75,28 +74,30 @@ class LSTMMODEL(nn.Module):
 		return self.loss_func(logits.view(-1, 9), y.view(-1))
 
 
-
 class MLPModel(nn.Module):
 	def __init__(self, m, k):
 		super(MLPModel, self).__init__()
 		self.m = m
 		self.k = k
-		self.rnn = rnn.MyRNNLayer(m + 1, k)
+		self.hidden_layer = mlp.MyLinear(m, k)
 		self.V = mlp.MyLinear(k, m)
-		self.loss_func = nn.CrossEntropyLoss()
+		self.loss_func = nn.MSELoss()
 
 	def forward(self, inputs):
-		state = torch.zeros(inputs.size(0), self.k, requires_grad=False)
 		outputs = []
-		for input in torch.unbind(inputs, dim=1):
-			state = self.rnn(input, state)
-			outputs.append(self.V(state))
-		return torch.stack(outputs, dim=1)
+		for my_input in torch.unbind(inputs, dim=0):
+			my_input_as_tensor = my_input.reshape(1, -1)
+			hidden_layer_output = self.hidden_layer(my_input_as_tensor)
+			output_layer_output = self.V(hidden_layer_output)
+			outputs.append(output_layer_output.reshape(-1))
+		return torch.stack(outputs, dim=0)
 
 	def loss(self, logits, y):
-		return self.loss_func(logits.view(-1, 9), y.view(-1))
+		return self.loss_func(logits, y.float())
 
-T = 1
+
+
+T = 100
 K = 3
 batch_size = 128
 iter = 5000
@@ -108,7 +109,8 @@ lr = 1e-3
 print_every = 20
 
 
-def main():
+def main_rnn():
+
 	# create the training data
 	X, Y = copy_data(T, K, n_train)
 	print('{}, {}'.format(X.shape, Y.shape))
@@ -131,5 +133,25 @@ def main():
 			print('Step={}, Loss={:.4f}'.format(step, loss.item()))
 
 
+def main_mlp():
+
+	# create the training data
+	X, Y = copy_data(T, K, n_train)
+	print('{}, {}'.format(X.shape, Y.shape))
+	model = MLPModel(T+2*K, hidden_size)
+	model.train()
+	opt = torch.optim.RMSprop(model.parameters(), lr=lr)
+	for step in range(iter):
+		bX = X[step * batch_size: (step + 1) * batch_size]
+		bY = Y[step * batch_size: (step + 1) * batch_size]
+		opt.zero_grad()
+		logits = model(bX)
+		loss = model.loss(logits, bY)
+		loss.backward()
+		opt.step()
+		if step % print_every == 0:
+			print('Step={}, Loss={:.4f}'.format(step, loss.item()))
+
+
 if __name__ == "__main__":
-	main()
+	main_mlp()

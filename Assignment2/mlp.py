@@ -1,7 +1,7 @@
 import numpy as np
 import torch
 import torch.nn as nn
-
+import math
 
 class MyLinear(nn.Module):
 	def __init__(self, in_features, out_features):
@@ -19,16 +19,9 @@ class MyLinear(nn.Module):
 		output = torch.sigmoid(torch.mm(my_input.float(), self.weight.t()))
 		return output
 
-	def update(self, my_input, label, lr=0.01):
-		output = self.forward(my_input)
-		mse_loss = nn.MSELoss()
-		loss_output = mse_loss(output, label)
-		loss_output.backward()
-
 	def __str__(self):
 		return 'in_features={}, out_features={}, bias={}'.format(
 			self.in_features, self.out_features, self.bias is not None)
-
 
 def main():
 	my_linear = MyLinear(256, 30)

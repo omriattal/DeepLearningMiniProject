@@ -97,7 +97,7 @@ class MLPModel(nn.Module):
 
 
 
-T = 100
+T = 20
 K = 3
 batch_size = 128
 iter = 5000
@@ -109,8 +109,29 @@ lr = 1e-3
 print_every = 20
 
 
-def main_rnn():
+def main_lstm():
+	# create the training data
+	X, Y = copy_data(T, K, n_train)
+	print('{}, {}'.format(X.shape, Y.shape))
+	ohX = torch.FloatTensor(batch_size, T + 2 * K, n_characters)
+	onehot(ohX, X[:batch_size])
+	print('{}, {}'.format(X[:batch_size].shape, ohX.shape))
+	model = LSTMMODEL(n_classes, hidden_size)
+	model.train()
+	opt = torch.optim.RMSprop(model.parameters(), lr=lr)
+	for step in range(iter):
+		bX = X[step * batch_size: (step + 1) * batch_size]
+		bY = Y[step * batch_size: (step + 1) * batch_size]
+		onehot(ohX, bX)
+		opt.zero_grad()
+		logits = model(ohX)
+		loss = model.loss(logits, bY)
+		loss.backward()
+		opt.step()
+		if step % print_every == 0:
+			print('Step={}, Loss={:.4f}'.format(step, loss.item()))
 
+def main_rnn():
 	# create the training data
 	X, Y = copy_data(T, K, n_train)
 	print('{}, {}'.format(X.shape, Y.shape))
@@ -154,4 +175,4 @@ def main_mlp():
 
 
 if __name__ == "__main__":
-	main_mlp()
+	main_lstm()

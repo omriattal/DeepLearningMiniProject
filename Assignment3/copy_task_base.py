@@ -11,16 +11,17 @@ seed = 1234
 torch.manual_seed(seed)
 np.random.seed(seed)
 
-
 # Copy data
 def copy_data(T, K, batch_size):
 	seq = np.random.randint(1, high=9, size=(batch_size, K))
 	zeros1 = np.zeros((batch_size, T))
-	zeros2 = np.zeros((batch_size, K - 1))
-	zeros3 = np.zeros((batch_size, K + T))
+	zeros2 = np.zeros((batch_size, K-1))
+	zeros3 = np.zeros((batch_size, K+T))
 	marker = 9 * np.ones((batch_size, 1))
+
 	x = torch.LongTensor(np.concatenate((seq, zeros1, marker, zeros2), axis=1))
 	y = torch.LongTensor(np.concatenate((zeros3, seq), axis=1))
+
 	return x, y
 
 
@@ -33,20 +34,20 @@ def onehot(out, input):
 
 # Class for handling copy data
 class Model(nn.Module):
-	def __init__(self, m, hidden_size_input):
+	def __init__(self, m, k):
 		super(Model, self).__init__()
 
 		self.m = m
-		self.hidden_size = hidden_size_input
+		self.k = k
 
-		self.rnn = nn.RNNCell(m + 1, hidden_size_input)
-		self.V = nn.Linear(hidden_size_input, m)
+		self.rnn = nn.RNNCell(m+1, k)
+		self.V = nn.Linear(k, m)
 
 		# loss for the copy data
 		self.loss_func = nn.CrossEntropyLoss()
 
 	def forward(self, inputs):
-		state = torch.zeros(inputs.size(0), self.hidden_size, requires_grad=False)
+		state = torch.zeros(inputs.size(0), self.k, requires_grad=False)
 
 		outputs = []
 		for input in torch.unbind(inputs, dim=1):
@@ -56,15 +57,13 @@ class Model(nn.Module):
 		return torch.stack(outputs, dim=1)
 
 	def loss(self, logits, y):
-		what = logits.view(-1, 9)
-		els = y.view(-1)
 		return self.loss_func(logits.view(-1, 9), y.view(-1))
 
-
-T = 20
+T = 5
 K = 3
+
 batch_size = 128
-iter = 500
+iter = 5000
 n_train = iter * batch_size
 n_classes = 9
 hidden_size = 64
@@ -72,19 +71,13 @@ n_characters = n_classes + 1
 lr = 1e-3
 print_every = 20
 
-
 def main():
 	# create the training data
 	X, Y = copy_data(T, K, n_train)
 	print('{}, {}'.format(X.shape, Y.shape))
-	plt.imshow(X[:20])
-	plt.show()
-	plt.imshow(Y[:20])
-	plt.show()
+
 	ohX = torch.FloatTensor(batch_size, T + 2 * K, n_characters)
-	temp1 = X[:batch_size]
 	onehot(ohX, X[:batch_size])
-	temp2 = ohX
 	print('{}, {}'.format(X[:batch_size].shape, ohX.shape))
 
 	model = Model(n_classes, hidden_size)
@@ -106,7 +99,6 @@ def main():
 
 		if step % print_every == 0:
 			print('Step={}, Loss={:.4f}'.format(step, loss.item()))
-
 
 if __name__ == "__main__":
 	main()

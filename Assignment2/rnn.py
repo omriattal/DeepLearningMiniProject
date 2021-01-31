@@ -16,7 +16,6 @@ class MyRNNLayer (nn.Module):
     self.weight_ih = torch.nn.Parameter(torch.randn(self.input_size, self.hidden_size,requires_grad = True))
     self.weight_hh = torch.nn.Parameter(torch.randn(self.hidden_size, self.hidden_size,requires_grad = True))
 
-
   def update(self,input,hidden,label,lr = 0.01):
     output = self.forward(input,hidden)
     mse_loss = nn.MSELoss()

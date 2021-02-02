@@ -1,10 +1,10 @@
 import pytorch_lightning as pl
 import torch
-from model import Model
+from network import Network
 
 class MyLightningModule(pl.LightningModule):
 
-    def __init__(self,model: Model,lr):
+    def __init__(self, model: Network, lr):
         super().__init__()
         self.model = model
         self.optimizer = torch.optim.Adam(self.parameters(), lr=lr)

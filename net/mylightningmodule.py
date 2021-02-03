@@ -24,19 +24,19 @@ class MyLightningModule(pl.LightningModule):
         outs = self.forward(x)
         loss = self.loss_func(outs, y_flattened)
         predictions = outs.argmax(1)
-        accuracy = float(predictions.eq(y_flattened).sum()) / len(outs)
-        return loss, accuracy
+        acc = float(predictions.eq(y_flattened).sum()) / len(outs)
+        return loss, acc
 
     def training_step(self, batch, batch_idx):
-        loss, acc = self.step(batch)
+        loss, acc = self.one_step(batch)
         return {'loss': loss, 'progress_bar': {'acc': acc}}
 
     def validation_step(self, batch, batch_nb):
-        loss, acc = self.step(batch)
+        loss, acc = self.one_step(batch)
         return {'val_loss': loss, "val_acc": acc}
 
     def test_step(self, batch, batch_nb):
-        loss, acc = self.step(batch)
+        loss, acc = self.one_step(batch)
         return {'test_loss': loss, "test_acc": acc}
 
     # TODO: on validation ends?

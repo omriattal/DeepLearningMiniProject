@@ -2,6 +2,9 @@ import torch
 from torch.utils.data import DataLoader, Dataset
 import os
 
+from typing import Tuple
+
+
 class MyDataset(Dataset):
     def __init__(self, data: torch.tensor, begin: int, end: int, time_steps: int, disjoint: bool):
         super(MyDataset, self).__init__()
@@ -42,12 +45,12 @@ def data_as_long_tensor(data: str, vocabulary, device) -> torch.tensor:
     return torch.tensor([vocabulary[c] for c in data], dtype=torch.long, device=device)
 
 
-#TODO: what about that function?
+# TODO: what about that function?
 def long_tensor_as_data(tensor):
     pass
 
 
-def load_data(file_name, splits_percents, batch_size, time_steps, disjoint, device):
+def load_data(file_name, splits_percents, batch_size, time_steps, disjoint, device) -> Tuple[list, dict]:
     file = open(file_name, encoding="utf-8", mode="r")
     all_data = file.read()
     vocabulary = create_vocabulary_dict(all_data)
@@ -57,9 +60,9 @@ def load_data(file_name, splits_percents, batch_size, time_steps, disjoint, devi
     for i in range(len(splits) - 1):
         current_dataset = MyDataset(data_as_tensor, splits[i], splits[i + 1], time_steps, disjoint)
         if i == 0:  # train
-            data_loader = DataLoader(current_dataset, batch_size=batch_size, shuffle=True)  #TODO shuffle?
+            data_loader = DataLoader(current_dataset, batch_size=batch_size, shuffle=True)  # TODO shuffle?
         else:  # validation and test
-            data_loader = DataLoader(current_dataset, batch_size=batch_size, shuffle=False)  #TODO shuffle?
+            data_loader = DataLoader(current_dataset, batch_size=batch_size, shuffle=False)  # TODO shuffle?
         data_loaders.append(data_loader)
     file.close()
     return data_loaders, vocabulary

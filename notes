@@ -1,0 +1,7 @@
+1. Be sure of hyper parameters:
+    - early stopping
+    - truncated bbpt
+    - dropout
+    - weight initialization
+2. part 4.3 I think it's okay to show 2 graphs including just lstms.
+3. Dropout maybe connected to GRU

@@ -41,7 +41,10 @@ def create_vocabulary_dict(data: str) -> dict:
 def data_as_long_tensor(data: str, vocabulary, device) -> torch.tensor:
     return torch.tensor([vocabulary[c] for c in data], dtype=torch.long, device=device)
 
-def long_tensor_as_data(tensor,):
+
+#TODO: what about that function?
+def long_tensor_as_data(tensor):
+    pass
 
 def load_data(file_name, splits_percents, batch_size, time_steps, disjoint, device):
     file = open(file_name)

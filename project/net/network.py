@@ -47,7 +47,7 @@ class Network(Module):
     def save_network(self):
         self._forward_hooks.clear() # must be empty
         with open(f"models/{self.network_name()}.pkl", "wb") as file:
-            torch.save(self,file)
+            torch.save(self, file)
 
     @staticmethod
     def load_network(model_name,num_layers,hidden_size):

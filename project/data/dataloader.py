@@ -56,8 +56,8 @@ def load_data(file_name, splits_percents, batch_size, time_steps, disjoint, devi
     for i in range(len(splits)):
         current_dataset = MyDataset(data_as_tensor, splits[i], splits[i + 1], time_steps, disjoint)
         if i == 0:  # train
-            data_loader = DataLoader(current_dataset, batch_size=batch_size, shuffle=True)  # shuffle?
+            data_loader = DataLoader(current_dataset, batch_size=batch_size, shuffle=True)  #TODO shuffle?
         else:  # validation and test
-            data_loader = DataLoader(current_dataset, batch_size=batch_size, shuffle=False)  # shuffle?
+            data_loader = DataLoader(current_dataset, batch_size=batch_size, shuffle=False)  #TODO shuffle?
         data_loaders.append(data_loader)
     return data_loaders, vocabulary

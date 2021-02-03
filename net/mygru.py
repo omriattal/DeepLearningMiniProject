@@ -17,7 +17,7 @@ class MyGRU(GRU, MyModel):
             rt = sigmoid(mm(xt, weight_ir.T) + mm(current_hidden, weight_hr.T))
             zt = sigmoid(mm(xt, weight_iz.T) + mm(current_hidden, weight_hz.T))
             nt = tanh(mm(xt, weight_in.T) + rt * (mm(current_hidden, weight_hn)))
-            xt = (1 - zt) * nt + zt * current_hidden
+            xt = (1 - zt) * nt + zt * current_hidden  # TODO: check dimensions on the left
             evolution_of_xt.append(xt)
             gate_list.append([rt.squeeze_(dim=0).tolist(), zt.squeeze(dim=0).tolist()])
         return evolution_of_xt, gate_list

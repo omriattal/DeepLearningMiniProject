@@ -1,7 +1,6 @@
 import torch
 from torch.utils.data import DataLoader, Dataset
 import os
-
 from typing import Tuple
 
 
@@ -15,7 +14,6 @@ class MyDataset(Dataset):
     """
     mandatory function to implement as part of dataset
     """
-
     def __len__(self) -> int:
         if self.disjoint:
             return len(self.all_data) // self.time_steps
@@ -25,9 +23,8 @@ class MyDataset(Dataset):
     """
      mandatory function to implement as part of dataset
     """
-
     def __getitem__(self, index):
-        begin = 0
+        begin = index
         if self.disjoint:
             begin = index * self.time_steps
         item = self.all_data[begin:begin + self.time_steps]
@@ -56,7 +53,7 @@ def load_data(file_name, splits_percents, batch_size, time_steps, disjoint, devi
     vocabulary = create_vocabulary_dict(all_data)
     splits = [len(all_data) * percent // 100 for percent in splits_percents]
     data_as_tensor = data_as_long_tensor(all_data, vocabulary, device)
-    data_loaders = []
+    data_loaders = []  # will be of size 3
     for i in range(len(splits) - 1):
         current_dataset = MyDataset(data_as_tensor, splits[i], splits[i + 1], time_steps, disjoint)
         if i == 0:  # train

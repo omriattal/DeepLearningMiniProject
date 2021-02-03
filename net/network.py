@@ -12,7 +12,7 @@ class Network(Module):
         super().__init__()
         self.vocabulary_size = vocabulary_size
         self.hidden_size = hidden_size
-        self.model_name = model_name
+        self.model_name = model_name # lstm, gru or rnn
         self.num_layers = num_layers
         self.device = device
         self.predictor = Linear(hidden_size, vocabulary_size)
@@ -29,17 +29,19 @@ class Network(Module):
     def one_hot(self, x):
         return torch.nn.functional.one_hot(x, num_classes=self.vocabulary_size).float()
 
+    #TODO: implement extract from loader
+
     def forward(self, x):
         seq_len, batch_size = x.shape
         x = self.one_hot(x)
-        x = self.net(x)
-        x = self.dropout(x[0])
-        x = self.predictor(x)
-        return x.view(batch_size * seq_len, -1)
+        x,hidden = self.net(x) #regular forward for the network
+        x = self.dropout(x) # dropout x
+        label = self.predictor(x)
+        return label.view(batch_size * seq_len, -1)
 
     def extract_gates(self, x):  #TODO: predict?
         x = self.one_hot(x)
-        return self.nn.forward_extract(x)[2]
+        return self.net.forward_extract(x)[2]
 
     def network_name(self):
         return f"{self.model_name}-{self.num_layers}-{self.hidden_size}"

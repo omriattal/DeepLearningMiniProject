@@ -6,7 +6,6 @@ from .mymodel import MyModel
 class MyRNN(RNN, MyModel):
     """
     shape of hidden: num_layers*batch*hidden_size
-
     """
 
     def recurrence(self, xt, hiddens):
@@ -19,5 +18,5 @@ class MyRNN(RNN, MyModel):
             xt = tanh(
                 mm(xt, weight_ih.T) + mm(current_hidden, weight_hh.T))  # TODO: order of matrix multplication, bias?
             evolution_of_xt.append(xt)
-            gate_list.append(xt.squeeze().tolist())
+            gate_list.append(xt.squeeze().tolist())  # TODO: what is this
         return evolution_of_xt, gate_list  # TODO: return value

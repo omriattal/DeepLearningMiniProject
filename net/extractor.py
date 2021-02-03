@@ -6,7 +6,7 @@ class Extractor:
     def forward_with_extract(self, x, verify=True):
         x_orig = x  # saved for a later forward pass
         self.eval() # set the model for evaluation mode
-        if self.batch_first:  # if the input and output dimensions are batch*seq_len*feature_size
+        if self.batch_first:  # if the input and output dimensions are batch*seq_len*input_size
             x = x_orig.transpose(0, 1)  # make it seq_len*batch*input_size
 
         if isinstance(self, LSTM):  # class inherits an LSTM
@@ -15,6 +15,10 @@ class Extractor:
             hidden = zeros(self.num_layers, 1, self.hidden_size, device=x.device)  # only one input
         outputs = []
         all_gates = []
+
+        """
+        move the input x forward into the network
+        """
         for t in range(len(x)):  # seq_len
             xt = x[t]
             hidden, gates = self.recurrence(xt, hidden)

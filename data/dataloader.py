@@ -34,7 +34,7 @@ class MyDataset(Dataset):
 
 
 def create_vocabulary_dict(data: str) -> dict:
-    vocab = {c: o for o, c in enumerate(sorted(data))}
+    vocab = {c: o for o, c in enumerate(sorted(set(data)))}
     return vocab
 
 
@@ -46,19 +46,20 @@ def data_as_long_tensor(data: str, vocabulary, device) -> torch.tensor:
 def long_tensor_as_data(tensor):
     pass
 
+
 def load_data(file_name, splits_percents, batch_size, time_steps, disjoint, device):
-    print(os.listdir(os.getcwd()))
-    file = open(file_name)
+    file = open(file_name, encoding="utf-8", mode="r")
     all_data = file.read()
     vocabulary = create_vocabulary_dict(all_data)
     splits = [len(all_data) * percent // 100 for percent in splits_percents]
     data_as_tensor = data_as_long_tensor(all_data, vocabulary, device)
     data_loaders = []
-    for i in range(len(splits)):
+    for i in range(len(splits) - 1):
         current_dataset = MyDataset(data_as_tensor, splits[i], splits[i + 1], time_steps, disjoint)
         if i == 0:  # train
             data_loader = DataLoader(current_dataset, batch_size=batch_size, shuffle=True)  #TODO shuffle?
         else:  # validation and test
             data_loader = DataLoader(current_dataset, batch_size=batch_size, shuffle=False)  #TODO shuffle?
         data_loaders.append(data_loader)
+    file.close()
     return data_loaders, vocabulary

@@ -5,8 +5,7 @@ from net.network import Network
 from net.mylightningmodule import MyLightningModule
 import os
 for file_name in FILE_NAMES:
-    os.chdir("project")
-    file_path = f"{file_name}.txt"
+    file_path = f"data/{file_name}.txt"
     (train, test, val), vocabulary = dataloader.load_data(file_path, SPLITS, BATCH_SIZE, SEQ_LEN, True, DEVICE)
     for model_name in ["lstm", "gru", "rnn"]:
         for num_layers in [1, 2, 3]:

@@ -1,5 +1,5 @@
 import torch
-FILE_NAMES = ["frankenstein", "sherlock"]
+FILE_NAMES = ["sherlock","frankenstein"]
 SEQ_LEN = 100
 BATCH_SIZE = 100
 SPLITS = (0, 80, 90, 100)

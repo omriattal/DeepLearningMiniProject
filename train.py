@@ -3,7 +3,6 @@ from data import dataloader
 from parameters import *
 from net.network import Network
 from net.mylightningmodule import MyLightningModule
-import os
 
 for file_name in FILE_NAMES:
     file_path = f"data/{file_name}.txt"

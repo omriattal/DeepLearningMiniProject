@@ -18,7 +18,7 @@ class MyLightningModule(pl.LightningModule):
     def configure_optimizers(self):
         return [self.optimizer], [self.scheduler]
 
-    def one_step(self, batch):
+    def one_step(self, batch,):
         x, y = batch
         y_flattened = y.flatten()
         outs = self.forward(x)
@@ -29,7 +29,7 @@ class MyLightningModule(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         loss, acc = self.one_step(batch)
-        return {'loss': loss, 'progress_bar': {'acc': acc}}
+        return {'train loss': loss, 'progress_bar': {'acc': acc}}
 
     def validation_step(self, batch, batch_nb):
         loss, acc = self.one_step(batch)

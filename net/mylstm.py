@@ -1,16 +1,17 @@
 from torch import tanh, sigmoid, cat, mm
 from torch.nn import LSTM
 from .mymodel import MyModel
+from .extractor import Extractor
 
 
-class MyLSTM(LSTM, MyModel):
+class MyLSTM(LSTM, Extractor, MyModel):
     def recurrence(self, xt, hidden):
         hiddens, cells = hidden
         evolution_of_xt, evolution_of_yt, gate_list = [], [], []
         for layer in range(self.num_layers):
             weights_input, weights_hidden, _, _ = self.all_weights[layer]
-            weight_ii, weight_if, weight_ic, weight_io = weights_input.view(4, self.hidden_size, self.input_size)
-            weight_hi, weight_hf, weight_hc, weight_ho = weights_hidden.view(4, self.hidden_size, self.hidden_size)
+            weight_ii, weight_if, weight_ic, weight_io = weights_input.view(4, self.hidden_size, -1)
+            weight_hi, weight_hf, weight_hc, weight_ho = weights_hidden.view(4, self.hidden_size, -1)
             input_gate = sigmoid(mm(xt, weight_ii.T) + mm(hiddens[layer], weight_hi.T))
             forget_gate = sigmoid(mm(xt, weight_if.T) + mm(hiddens[layer], weight_hf.T))
             main_gate = sigmoid(mm(xt, weight_ic.T) + mm(hiddens[layer], weight_hc.T))

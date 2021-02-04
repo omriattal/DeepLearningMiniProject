@@ -3,7 +3,7 @@ from torch.nn import LSTM
 
 
 class Extractor:
-    def forward_with_extract(self, x, verify=True):
+    def forward_extract(self, x, verify=True):
         x_orig = x  # saved for a later forward pass
         self.eval() # set the model for evaluation mode
         if self.batch_first:  # if the input and output dimensions are batch*seq_len*input_size

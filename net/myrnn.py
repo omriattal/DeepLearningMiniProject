@@ -1,9 +1,10 @@
 from torch import tanh, cat, mm
 from torch.nn import RNN
 from .mymodel import MyModel
+from .extractor import Extractor
 
 
-class MyRNN(RNN, MyModel):
+class MyRNN(RNN, Extractor, MyModel):
     """
     shape of hidden: num_layers*batch*hidden_size
     """
@@ -18,5 +19,5 @@ class MyRNN(RNN, MyModel):
             xt = tanh(
                 mm(xt, weight_ih.T) + mm(current_hidden, weight_hh.T))
             evolution_of_xt.append(xt)
-            gate_list.append(xt.squeeze().tolist()) #TODO: check
-        return evolution_of_xt, gate_list  # TODO: return value
+            gate_list.append(xt.squeeze().tolist())
+        return cat(evolution_of_xt), gate_list  # TODO: return value

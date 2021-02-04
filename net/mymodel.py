@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
 from .extractor import Extractor
-from torch.nn import Module
 
 
-class MyModel(ABC, Extractor, Module):
+class MyModel(ABC):
 
     @abstractmethod
     def recurrence(self, xt, hiddens):

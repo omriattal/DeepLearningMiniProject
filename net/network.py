@@ -28,6 +28,18 @@ class Network(Module):
         return torch.nn.functional.one_hot(x, num_classes=self.vocabulary_size).float()
 
     # TODO: implement extract from loader
+    def extract_from_loader(self, data_loader):
+        epochs = []
+        for x, _ in data_loader:
+            x = self.extract_gates(x)
+            # 1. reshape so batch_dim is first
+            x = np.array(x).transpose((0, 3, 1, 2, 4))
+            # 2. concatenate sequences along batch dim
+            x = np.concatenate(x)
+            # 3. concatenate along epoch dimension
+            epochs.append(x)
+        # 4. set gate_id as dimension 0 -> unbox to 4 variables with [layer, textpos, gate]
+        return np.concatenate(epochs).transpose((2, 1, 0, 3))
 
     def forward(self, x):
         seq_len, batch_size = x.shape

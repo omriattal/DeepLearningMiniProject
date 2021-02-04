@@ -39,4 +39,3 @@ class MyLightningModule(pl.LightningModule):
         loss, acc = self.one_step(batch)
         return {'test_loss': loss, "test_acc": acc}
 
-    # TODO: on validation ends?

@@ -29,7 +29,7 @@ class MyLightningModule(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         loss, acc = self.one_step(batch)
-        return {'train loss': loss, 'progress_bar': {'acc': acc}}
+        return {'loss': loss, 'progress_bar': {'acc': acc}}
 
     def validation_step(self, batch, batch_nb):
         loss, acc = self.one_step(batch)

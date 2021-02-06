@@ -13,6 +13,7 @@ import json
 import os.path as path
 from net.mylstm import MyLSTM
 
+
 def create_venn(train_loader: DataLoader):
     sets = {}
     for net_params in [("rnn", 1, 256), ("gru", 1, 128), ("lstm", 2, 64)]:
@@ -106,5 +107,4 @@ if __name__ == '__main__':
     # create_model_performance_table(test)
     # create_venn(test)
     create_gate_plots("lstm", 1, 32, test)
-
 

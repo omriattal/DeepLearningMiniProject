@@ -15,9 +15,9 @@ class MyGRU(GRU, Extractor, MyModel):
             weight_ir, weight_iz, weight_in = weights_input.view(3, self.hidden_size, -1)
             weight_hr, weight_hz, weight_hn = weights_hidden.view(3, self.hidden_size, -1)
             current_hidden = hiddens[layer]
-            rt = sigmoid(mm(xt, weight_ir.T) + mm(current_hidden, weight_hr.T))
-            zt = sigmoid(mm(xt, weight_iz.T) + mm(current_hidden, weight_hz.T))
-            nt = tanh(mm(xt, weight_in.T) + rt * (mm(current_hidden, weight_hn)))
+            rt = sigmoid(xt @ weight_ir.T + current_hidden @ weight_hr.T)
+            zt = sigmoid(xt @ weight_iz.T + current_hidden @ weight_hz.T)
+            nt = tanh((xt @ weight_in.T) + rt * (current_hidden @ weight_hn))
             xt = (1 - zt) * nt + zt * current_hidden  # TODO: check dimensions on the left
             evolution_of_xt.append(xt)
             gate_list.append([rt.squeeze_(dim=0).tolist(), zt.squeeze(dim=0).tolist()])

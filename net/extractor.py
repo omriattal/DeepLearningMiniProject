@@ -33,9 +33,9 @@ class Extractor:
             outputs = outputs.transpose(0, 1)
         self.train()  # return to training mode. TODO: remove,also next line.
 
-        if verify:
-            outputs2, hidden2 = self.forward(x_orig)
-            assert (outputs - outputs2).mean() < 0.0001
-            assert (cat(hidden) - cat(hidden2) if isinstance(self, LSTM) else hidden - hidden2).mean() < 0.0001
+        # if verify:
+        #     outputs2, hidden2 = self.forward(x_orig)
+        #     assert (outputs - outputs2).mean() < 0.0001
+        #     assert (cat(hidden) - cat(hidden2) if isinstance(self, LSTM) else hidden - hidden2).mean() < 0.0001
 
         return outputs, hidden, all_gates

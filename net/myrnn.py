@@ -17,7 +17,7 @@ class MyRNN(RNN, Extractor, MyModel):
             weight_ih, weight_hh, _, _ = self.all_weights[layer]
             current_hidden = hiddens[layer]
             xt = tanh(
-                mm(xt, weight_ih.T) + mm(current_hidden, weight_hh.T))
+                xt @ weight_ih.T + current_hidden @ weight_hh.T)
             evolution_of_xt.append(xt)
             gate_list.append(xt.squeeze().tolist())
-        return cat(evolution_of_xt), gate_list  # TODO: return value
+        return cat(evolution_of_xt), gate_list

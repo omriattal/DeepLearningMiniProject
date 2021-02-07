@@ -99,7 +99,8 @@ def create_gate_plots(model_name, num_layers, hidden_size, test_loader):
         visualize_gate(input_gates, forget_gates, output_gates)
     elif model_name == "gru":
         # TODO: complete GRU case.
-        network.extract_from_loader(test_loader)
+        reset_gate, update_gate = network.extract_from_loader(test_loader)
+        visualize_gate(update_gate, reset_gate)
 
 
 if __name__ == '__main__':

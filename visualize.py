@@ -113,8 +113,12 @@ def visualize_cell(cell, x, hidden_size, vis_dir="visualization"):
 def create_cell_visualization(model_name, num_layers, hidden_size, test_loader:DataLoader, vocabulary):
     network = Network.load_network(model_name, num_layers, hidden_size)
     network.eval()
-    reset_gates, update_gates = network.extract_from_loader(test_loader)
-    visualize_cell(reset_gates[:, 50:1000], dataloader.decode(test_loader.dataset.data[50:1000], vocabulary,), hidden_size)
+    if model_name == "lstm":
+        input_gates, forget_gates, cell_gates, output_gates, cell_states = network.extract_from_loader(test_loader)
+        visualize_cell(input_gates, forget_gates, output_gates)
+    elif model_name == "gru":
+        reset_gates, update_gates = network.extract_from_loader(test_loader)
+        visualize_cell(reset_gates[:, 50:1000], dataloader.decode(test_loader.dataset.data[50:1000], vocabulary,), hidden_size)
 
 
 if __name__ == '__main__':

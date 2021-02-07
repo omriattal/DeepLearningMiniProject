@@ -64,6 +64,11 @@ class Network(Module):
     def load_network(model_name, num_layers, hidden_size):
         with open(f"models/{model_name}-{num_layers}-{hidden_size}.pkl", "rb") as file:
             net_from_file = torch.load(file)
-            net = Network(net_from_file.vocabulary_size, net_from_file.hidden_size, net_from_file.model_name, net_from_file.num_layers, net_from_file.device)
+
+            device_temp = net_from_file.device
+            if not torch.cuda.is_available():
+                device_temp = "cpu"
+
+            net = Network(net_from_file.vocabulary_size, net_from_file.hidden_size, net_from_file.model_name, net_from_file.num_layers, device_temp)
             net.load_state_dict(net_from_file.state_dict())
             return net

@@ -2,7 +2,7 @@ from net.network import Network
 from data.dataloader import DataLoader
 from data import dataloader
 from torch import argmax
-import pandas as pd
+# import pandas as pd
 from parameters import *
 import numpy as np
 import torch
@@ -103,10 +103,25 @@ def create_gate_plots(model_name, num_layers, hidden_size, test_loader):
         visualize_gate(update_gate, reset_gate)
 
 
+def visualize_cell(cell, x, hidden_size, vis_dir="visualization"):
+    char_cell = {'cell_size': hidden_size, 'seq': ''.join(x)}
+    char_cell.update({f"cell_layer_{layer + 1}": cell[layer].tolist() for layer in range(len(cell))})
+    with open(path.join(vis_dir, 'char_cell.json'), 'w') as json_file:
+        json.dump(char_cell, json_file)
+
+
+def create_cell_visualization(model_name, num_layers, hidden_size, test_loader:DataLoader, vocabulary):
+    network = Network.load_network(model_name, num_layers, hidden_size)
+    network.eval()
+    reset_gates, update_gates = network.extract_from_loader(test_loader)
+    visualize_cell(reset_gates[:, 50:1000], dataloader.decode(test_loader.dataset.data[50:1000], vocabulary,), hidden_size)
+
+
 if __name__ == '__main__':
     file_path = "data/warandpeace.txt"
     (train, test, val), vocabulary = dataloader.load_data(file_path, SPLITS, BATCH_SIZE, SEQ_LEN, True, DEVICE)
     # create_model_performance_table(test)
     # create_venn(test)
-    create_gate_plots("lstm", 1, 32, test)
+    # create_gate_plots("lstm", 1, 32, test)
+    create_cell_visualization("gru", 3, 32, test, vocabulary)
 

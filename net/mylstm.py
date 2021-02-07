@@ -14,7 +14,7 @@ class MyLSTM(LSTM, Extractor, MyModel):
             weight_hi, weight_hf, weight_hc, weight_ho = weights_hidden.view(4, self.hidden_size, -1)
             input_gate = sigmoid(xt @ weight_ii.T + hiddens[layer] @ weight_hi.T)
             forget_gate = sigmoid(xt @ weight_if.T + hiddens[layer] @ weight_hf.T)
-            main_gate = sigmoid(xt @ weight_ic.T + hiddens[layer] @ weight_hc.T)
+            main_gate = tanh(xt @ weight_ic.T + hiddens[layer] @ weight_hc.T)
             output_gate = sigmoid(xt @ weight_io.T + hiddens[layer] @ weight_ho.T)
             next_cell_state = forget_gate * cells[layer] + input_gate * main_gate
             xt = output_gate * tanh(next_cell_state)

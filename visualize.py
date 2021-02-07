@@ -98,7 +98,6 @@ def create_gate_plots(model_name, num_layers, hidden_size, test_loader):
         input_gates, forget_gates, cell_gates, output_gates, cell_states = network.extract_from_loader(test_loader)
         visualize_gate(input_gates, forget_gates, output_gates)
     elif model_name == "gru":
-        # TODO: complete GRU case.
         reset_gate, update_gate = network.extract_from_loader(test_loader)
         visualize_gate(update_gate, reset_gate)
 
@@ -115,7 +114,7 @@ def create_cell_visualization(model_name, num_layers, hidden_size, test_loader:D
     network.eval()
     if model_name == "lstm":
         input_gates, forget_gates, cell_gates, output_gates, cell_states = network.extract_from_loader(test_loader)
-        visualize_cell(input_gates, forget_gates, output_gates)
+        visualize_cell(cell_states[:, 50:1000], dataloader.decode(test_loader.dataset.data[50:1000], vocabulary,), hidden_size)
     elif model_name == "gru":
         reset_gates, update_gates = network.extract_from_loader(test_loader)
         visualize_cell(reset_gates[:, 50:1000], dataloader.decode(test_loader.dataset.data[50:1000], vocabulary,), hidden_size)
@@ -127,5 +126,5 @@ if __name__ == '__main__':
     # create_model_performance_table(test)
     # create_venn(test)
     # create_gate_plots("lstm", 1, 32, test)
-    create_cell_visualization("gru", 3, 32, test, vocabulary)
+    create_cell_visualization("lstm", 3, 32, test, vocabulary)
 

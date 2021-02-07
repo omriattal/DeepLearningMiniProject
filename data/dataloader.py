@@ -42,7 +42,6 @@ def data_as_long_tensor(data: str, vocabulary, device) -> torch.tensor:
     return torch.tensor([vocabulary[c] for c in data], dtype=torch.long, device=device)
 
 
-# TODO: what about that function?
 def decode(tensor, printable_id):
     id_printable = {v: k for k, v in printable_id.items()}
     return "".join([id_printable[int(t)] for t in tensor])

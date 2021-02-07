@@ -1,5 +1,5 @@
 from net.network import Network
-from data.dataloader import DataLoader
+from data.dataloader import DataLoader,MyDataset
 from data import dataloader
 from torch import argmax
 # import pandas as pd

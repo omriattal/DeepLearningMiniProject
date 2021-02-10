@@ -33,24 +33,27 @@ def create_venn(train_loader: DataLoader):
 
 def create_model_performance_table(test_loader: DataLoader):
     model_names = ["lstm", "rnn", "gru"]
-    n_layers = [1, 2, 3]
+    num_layerss = [1, 2, 3]
     hidden_sizes = [32, 64, 128, 256]
     corrects, losses = [], []
-    for MODEL_NAME in model_names:
-        for N_LAYERS in n_layers:
-            for HIDDEN_SIZE in hidden_sizes:
-                net = Network.load_network(MODEL_NAME, N_LAYERS, HIDDEN_SIZE).eval()
+    loss_func = torch.nn.functional.cross_entropy
+    for model_name in model_names:
+        for num_layer in num_layerss:
+            for hidden_size in hidden_sizes:
+                net = Network.load_network(model_name, num_layer, hidden_size)
+                net.eval()  # set the network in evaluation mode.
                 correct, loss = [], []
                 for x, y in test_loader:
                     out = net.forward(x)
-                    correct += (out.argmax(-1) == y.flatten()).tolist()
-                    loss += [(torch.nn.functional.cross_entropy(out, y.flatten())).tolist()]
+                    predictions = out.argmax(-1)
+                    correct += (predictions == y.flatten()).tolist()
+                    loss += [(loss_func(out, y.flatten())).tolist()]
                 corrects.append(np.mean(correct))
                 losses.append(np.mean(loss))
 
     for title, arr in (("accuracy", corrects), ("loss", losses)):
-        arr = np.array(arr).reshape((len(hidden_sizes), len(model_names) * len(n_layers)))
-        columns = pd.MultiIndex.from_product([model_names, n_layers])
+        arr = np.array(arr).reshape((len(hidden_sizes), len(model_names) * len(num_layerss)))
+        columns = pd.MultiIndex.from_product([model_names, num_layerss])
         df = pd.DataFrame(arr, columns=columns, index=hidden_sizes)
         df.columns.name = title
         display(df.round(3))
@@ -58,7 +61,7 @@ def create_model_performance_table(test_loader: DataLoader):
 
 def plot_gate(gates):
     num_gates, num_layers, _, _ = gates.shape
-    color_base = ["red", "green", "blue", "yellow"]
+    color_base = ["red", "green", "blue"]
     gate_names = {2: ["Update", "Reset"], 3: ["Input", "Forget", "Output"]}
     gate_names = gate_names[num_gates]
     fig = plt.figure()
@@ -101,7 +104,7 @@ def create_gate_plots(model_name, num_layers, hidden_size, test_loader):
 def visualize_cell(cell, x, hidden_size):
     char_cell = {'cell_size': hidden_size, 'seq': ''.join(x)}
     char_cell.update({f"cell_layer_{layer + 1}": cell[layer].tolist() for layer in range(len(cell))})
-    with open(path.join("visualization", 'char_cell.json'), 'w') as json_file:
+    with open(path.join("cell_visualization", 'char_cell.json'), 'w') as json_file:
         json.dump(char_cell, json_file)
 
 
@@ -121,10 +124,10 @@ def create_cell_visualization(model_name, num_layers, hidden_size, test_loader: 
 
 
 if __name__ == '__main__':
-    os.environ['KMP_DUPLICATE_LIB_OK'] = 'True' # prevents errors
+    os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'  # prevents errors
     file_path = "data/warandpeace.txt"
     (train, test, val), vocabulary = dataloader.load_data(file_path, SPLITS, BATCH_SIZE, SEQ_LEN, DEVICE)
     # create_model_performance_table(test)
     # create_venn(test)
-    # create_gate_plots("lstm", 3, 32, test)
-    # create_cell_visualization("lstm", 3, 32, test, vocabulary)
+    # create_gate_plots("lstm", 3, 64, test)
+    create_cell_visualization("lstm", 3, 32, test, vocabulary)

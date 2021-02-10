@@ -3,7 +3,7 @@
  <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>RNN Visualization</title>
+  <title>Recurrent Network Visualization</title>
   <meta name="description" content="">
   <meta name="author" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -143,13 +143,16 @@
   </head>
 
  <body onload="start();">
+ <div>
+     <h1>
+         Cell Visualization
+     </h1>
+ </div>
  <div id="wrap">
      <button onclick="NextEntry()" style="width:150px; height:30px;">Next Entry</button>
      <button onclick="PrevEntry()" style="width:150px; height:30px;">Previous Entry</button>
      <button onclick="NextLayer()" style="width:150px; height:30px;">Next Layer</button>
      <button onclick="PrevLayer()" style="width:150px; height:30px;">Previous Layer</button>
-     <button onclick="ShowMore()" style="width:150px; height:30px;">Show More</button>
-     <button onclick="showLess()" style="width:150px; height:30px;">Show Less</button>
 
      &nbsp;&nbsp;&nbsp;Entry/Cell_Size:
      <span id="cell-elem-idx" style="font-weight:bold"></span>/<span id="cell-size" span></span>&nbsp;&nbsp;Layer:<span

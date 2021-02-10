@@ -6,7 +6,7 @@ from net.mylightningmodule import MyLightningModule
 
 for file_name in FILE_NAMES:
     file_path = f"data/{file_name}.txt"
-    (train, test, val), vocabulary = dataloader.load_data(file_path, SPLITS, BATCH_SIZE, SEQ_LEN, True, DEVICE)
+    (train, test, val), vocabulary = dataloader.load_data(file_path, SPLITS, BATCH_SIZE, SEQ_LEN, DEVICE)
     for model_name in ["lstm", "gru", "rnn"]:
         for num_layers in [1, 2, 3]:
             for hidden_size in [32, 64, 128, 256]:

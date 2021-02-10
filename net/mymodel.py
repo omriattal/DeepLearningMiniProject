@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
-from .extractor import Extractor
+from .gate_extractor import GateExtractor
 
-
+"""
+Used as an abstract class only
+"""
 class MyModel(ABC):
 
     @abstractmethod
-    def recurrence(self, xt, hiddens):
+    def my_forward_with_extraction(self, xt, hiddens):
         pass

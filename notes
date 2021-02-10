@@ -4,3 +4,8 @@ TODO:
 3. Change code to make it our own
 4. Write results in paper
 5. Ask about part 4.3 - how much to implement
+
+Changing code TODOs:
+1. Disjoint in DataLoader
+2. Run the neworks again
+3. self.train() at the end of extractor

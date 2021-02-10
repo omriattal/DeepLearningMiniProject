@@ -1,12 +1,12 @@
 from torch import tanh, cat, mm, sigmoid
 from torch.nn import GRU
 from .mymodel import MyModel
-from .extractor import Extractor
+from .gate_extractor import GateExtractor
 
 
-class MyGRU(GRU, Extractor, MyModel):
+class MyGRU(GRU, GateExtractor, MyModel):
 
-    def recurrence(self, xt, hiddens):
+    def my_forward_with_extraction(self, xt, hiddens):
         gate_list = []
         evolution_of_xt = []
         hiddens = [*hiddens]
@@ -18,7 +18,7 @@ class MyGRU(GRU, Extractor, MyModel):
             rt = sigmoid(xt @ weight_ir.T + current_hidden @ weight_hr.T)
             zt = sigmoid(xt @ weight_iz.T + current_hidden @ weight_hz.T)
             nt = tanh((xt @ weight_in.T) + rt * (current_hidden @ weight_hn))
-            xt = (1 - zt) * nt + zt * current_hidden  # TODO: check dimensions on the left
+            xt = (1 - zt) * nt + zt * current_hidden
             evolution_of_xt.append(xt)
-            gate_list.append([rt.squeeze_(dim=0).tolist(), zt.squeeze(dim=0).tolist()])
+            gate_list.append([rt.squeeze(dim=0).tolist(), zt.squeeze(dim=0).tolist()])
         return cat(evolution_of_xt), gate_list

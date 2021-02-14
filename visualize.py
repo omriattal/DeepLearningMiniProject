@@ -17,7 +17,7 @@ import os
 
 def create_venn(train_loader: DataLoader):
     sets = {}
-    for net_params in [("rnn", 1, 256), ("gru", 1, 128), ("lstm", 2, 64)]:
+    for net_params in [("rnn", 2, 256), ("gru", 2, 32), ("lstm", 1, 256)]:
         net = Network.load_network(*net_params)
         net.eval()
         val = set()
@@ -111,8 +111,8 @@ def visualize_cell(cell, x, hidden_size):
 def create_cell_visualization(model_name, num_layers, hidden_size, test_loader: DataLoader, vocabulary):
     network = Network.load_network(model_name, num_layers, hidden_size)
     network.eval()
-    begin = 100
-    last = 2000
+    begin = 1
+    last = 844
     if model_name == "lstm":
         input_gates, forget_gates, cell_gates, output_gates, cell_states = network.extract_from_loader(test_loader)
         visualize_cell(cell_states[:, begin:last],
@@ -128,6 +128,6 @@ if __name__ == '__main__':
     file_path = "data/warandpeace.txt"
     (train, test, val), vocabulary = dataloader.load_data(file_path, SPLITS, BATCH_SIZE, SEQ_LEN, DEVICE)
     # create_model_performance_table(test)
-    # create_venn(test)
+    create_venn(test)
     # create_gate_plots("lstm", 3, 64, test)
-    create_cell_visualization("lstm", 3, 32, test, vocabulary)
+    # create_cell_visualization("lstm", 1, 256, test, vocabulary)

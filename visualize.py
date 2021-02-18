@@ -130,5 +130,5 @@ if __name__ == '__main__':
     (train, test, val), vocabulary = dataloader.load_data(file_path, SPLITS, BATCH_SIZE, SEQ_LEN, DEVICE)
     # create_model_performance_table(test)
     # create_venn(test)
-    create_gate_plots("gru", 3, 64, test)
+    create_gate_plots("gru", 3, 128, test)
     # create_cell_visualization("lstm", 1, 256, test, vocabulary)

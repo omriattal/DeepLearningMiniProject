@@ -17,6 +17,7 @@ import os
 
 def create_venn(train_loader: DataLoader):
     sets = {}
+    data_size = len(train_loader.dataset.data)
     for net_params in [("rnn", 2, 256), ("gru", 2, 32), ("lstm", 1, 256)]:
         net = Network.load_network(*net_params)
         net.eval()
@@ -27,7 +28,7 @@ def create_venn(train_loader: DataLoader):
             val |= {n + offset for n, b in enumerate(correct) if b}
             offset += len(y.flatten())
         sets[net.network_name()] = val
-    venn3(sets.values(), sets.keys())
+    venn3(sets.values(), sets.keys(), subset_label_formatter=lambda num: f"{(num / data_size):1.0%}")
     plt.show()
 
 
@@ -128,6 +129,6 @@ if __name__ == '__main__':
     file_path = "data/warandpeace.txt"
     (train, test, val), vocabulary = dataloader.load_data(file_path, SPLITS, BATCH_SIZE, SEQ_LEN, DEVICE)
     # create_model_performance_table(test)
-    create_venn(test)
-    # create_gate_plots("lstm", 3, 64, test)
+    # create_venn(test)
+    create_gate_plots("gru", 3, 64, test)
     # create_cell_visualization("lstm", 1, 256, test, vocabulary)

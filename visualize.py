@@ -128,7 +128,8 @@ if __name__ == '__main__':
     os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'  # prevents errors
     file_path = "data/warandpeace.txt"
     (train, test, val), vocabulary = dataloader.load_data(file_path, SPLITS, BATCH_SIZE, SEQ_LEN, DEVICE)
+    # Uncomment to reproduce one of the following.
     # create_model_performance_table(test)
     # create_venn(test)
-    create_gate_plots("gru", 3, 128, test)
+    # create_gate_plots("gru", 3, 128, test)
     # create_cell_visualization("lstm", 1, 256, test, vocabulary)

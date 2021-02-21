@@ -45,7 +45,7 @@ class Network(Module):
 
     def extract_gates(self, x):
         x = self.one_hot(x)
-        return self.net.forward_extract(x)[2] # only the gates
+        return self.net.forward_extract(x)[2]  # only the gates
 
     def network_name(self):
         return f"{self.model_name}-{self.num_layers}-{self.hidden_size}"

@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from .gate_extractor import GateExtractor
 
 """
 Used as an abstract class only

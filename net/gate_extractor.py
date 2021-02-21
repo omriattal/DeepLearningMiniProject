@@ -4,7 +4,7 @@ from torch.nn import LSTM
 
 class GateExtractor:
     def forward_extract(self, x):
-        self.eval() # set the model for evaluation mode
+        self.eval()  # set the model for evaluation mode
         if self.batch_first:  # if the input and output dimensions are batch*seq_len*input_size
             x = x.transpose(0, 1)  # make it seq_len*batch*input_size
 
